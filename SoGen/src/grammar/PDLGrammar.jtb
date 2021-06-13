@@ -1,0 +1,394 @@
+/**
+ * JTB template file created by SF JavaCC plugin 1.5.28+ wizard for JTB 1.4.0.2+ and JavaCC 1.5.0+
+ */
+options
+{
+  // debug_parser = true;
+  unicode_input = true;
+  JTB_P = "grammar";
+
+  static = false;
+}
+
+PARSER_BEGIN(PDLGrammar)
+package grammar;
+import grammar.visitor.*;
+import java.io.FileInputStream;
+import java.io.File;
+
+public class PDLGrammar
+{
+  public static void main(String args [])
+  {
+    if (args.length != 1)
+    {
+      System.out.println("Argument(s) Error!");
+      return;
+    }
+    try
+    {
+      PDLGrammar pdlParser = new PDLGrammar(new FileInputStream(new File(args [0])));
+      Start start = pdlParser.Start();
+      start.accept(new DepthFirstVoidVisitor());
+      System.out.println("Parse OK!");
+    }
+    catch (Exception e)
+    {
+      System.out.println("Parse Error!");
+      System.out.println(e.getMessage());
+    }
+  }
+}
+
+class MyVisitor extends DepthFirstVoidVisitor
+{
+  public void visit(NodeToken n)
+  {
+    System.out.println("visit " + n.tokenImage);
+  }
+}
+
+PARSER_END(PDLGrammar)
+
+SKIP :
+{
+  " "
+| "\t"
+| "\n"
+| "\r"
+| < "//" (~[ "\n", "\r" ])*
+    (
+      "\n"
+    | "\r"
+    | "\r\n"
+    ) >
+| < "/*" (~[ "*" ])* "*"
+    (
+      "*"
+    | ~[ "*", "/" ] (~[ "*" ])* "*"
+    )*
+    "/" >
+}
+
+TOKEN : /* KEYWORDS */
+{
+  < INPUT : "#input" >
+| < REQUIRED : "#required" >
+| < OBJECTIVE : "#objective" >
+| < OUTPUT : "#output" >
+| < INT : "int" >
+| < REAL : "real" >
+| < BOOL : "bool" >
+| < CHAR : "char" >
+| < FUNCTION : "function" >
+| < OF : "of" >
+| < IN : "in" >
+| < AND : "and" >
+| < OR : "or" >
+| < NOT : "not" >
+| < XOR : "xor" >
+| < MOD : "mod" >
+| < IF : "if" >
+| < ELSE : "else" >
+| < FORALL : "forall" >
+| < EXISTS : "exists" >
+| < SUMMATION : "summation" >
+| < PRODUCT : "product" >
+| < COUNT : "count" >
+| < MIN : "min" >
+| < MAX : "max" >
+| < MINIMIZE : "minimize" >
+| < MAXIMIZE : "maximize" >
+| < ALLDIFF : "alldiff" >
+}
+
+TOKEN : /* LITERALS */
+{
+  < INT_LITERAL :
+    "0"
+  | [ "1"-"9" ] ([ "0"-"9" ])* >
+| < REAL_LITERAL :
+    < FIXED_LITERAL >
+    (
+      [ "e", "E" ] ([ "+", "-" ])? < INT_LITERAL >
+    )? >
+| < BOOL_LITERAL :
+    (
+      "ture"
+    | "false"
+    ) >
+| < CHAR_LITERAL :
+    "'"
+    (
+      (~[ "'", "\\", "\n", "\r" ])
+    |
+      (
+        "\\"
+        (
+          [ "n", "t", "b", "r", "f", "\\", "'", "\"" ]
+        | [ "0"-"7" ] ([ "0"-"7" ])?
+        | [ "0"-"3" ] [ "0"-"7" ] [ "0"-"7" ]
+        )
+      )
+    )
+    "'" >
+| < STRING_LITERAL : "\"" (< CHAR_LITERAL >)* "\"" >
+| < #FIXED_LITERAL : < INT_LITERAL > "." ([ "0"-"9" ])* >
+}
+
+TOKEN : /* IDENTIFIERS */
+{
+  < IDENTIFIER :
+    < LETTER >
+    (
+      < LETTER >
+    | < DIGIT >
+    )* >
+| < #LETTER : [ "A"-"Z", "a"-"z", "_" ] >
+| < #DIGIT : [ "0"-"9" ] >
+}
+
+void Start() :
+{}
+{
+  [ InputSection() ] [ RequiredSection() ] [ ObjectiveSection() ] [ OutputSection() ] < EOF >
+}
+
+void InputSection() :
+{}
+{
+  < INPUT >
+  (
+    VarDef() ";"
+  )*
+}
+
+void RequiredSection() :
+{}
+{
+  < REQUIRED >
+  (
+    Exp() ";"
+  )*
+}
+
+void ObjectiveSection() :
+{}
+{
+  < OBJECTIVE >
+  [
+    [ "@" ]
+    (
+      < MINIMIZE >
+    | < MAXIMIZE >
+    )
+    Exp() ";"
+  ]
+}
+
+void OutputSection() :
+{}
+{
+  < OUTPUT >
+  (
+    Exp() ";"
+  )*
+}
+
+void VarDef() :
+{}
+{
+  < IDENTIFIER > < OF > Type()
+}
+
+void Type() :
+{}
+{
+  (
+    PrimType()
+  | "(" Type()
+    (
+      "," Type()
+    )*
+    ")"
+  )
+  (
+    (
+      "[" [ Bound() "~" Bound() ] "]"
+    | "{" "}"
+    )
+  )*
+}
+
+void PrimType() :
+{}
+{
+  (
+    < INT >
+  | < REAL >
+  | < BOOL >
+  | < CHAR >
+  )
+  [ < IN > "[" Bound() "," Bound() "]" ]
+}
+
+void Bound() :
+{}
+{
+  Exp()
+| "?"
+}
+
+void FuncDef() :
+{}
+{
+  < IDENTIFIER > < OF > < FUNCTION > VarList() "->" Type() "=" Exp()
+}
+
+void VarList() :
+{}
+{
+  < IDENTIFIER >
+| "("
+  (
+    LOOKAHEAD(2)
+    VarDef()
+  | < IDENTIFIER >
+  )
+  (
+    ","
+    (
+      LOOKAHEAD(2)
+      VarDef()
+    | < IDENTIFIER >
+    )
+  )*
+  ")"
+}
+
+void Exp() :
+{}
+{
+  LOOKAHEAD(2)
+  (
+    LOOKAHEAD(3)
+    VarDef()
+  | FuncDef()
+  )
+| LogExp()
+  [
+    ":" < FORALL > VarList() [ "(" Exp() ")" ]
+  ]
+| < EXISTS > VarList() "(" Exp() ")"
+| < IF > "(" Exp() ")" "(" Exp() ")" [ < ELSE > "(" Exp() ")" ]
+| < ALLDIFF > Exp()
+}
+
+void LogExp() :
+{}
+{
+  [ < NOT > ] RelExp()
+  [
+    (
+      < AND >
+    | < OR >
+    | < XOR >
+    )
+    LogExp()
+  ]
+}
+
+void RelExp() :
+{}
+{
+  AddExp()
+  [
+    (
+      "="
+    | "!="
+    | ">"
+    | "<"
+    | ">="
+    | "<="
+    | < IN >
+    )
+    AddExp()
+  ]
+}
+
+void AddExp() :
+{}
+{
+  [
+    "+"
+  | "-"
+  ]
+  MulExp()
+  [
+    (
+      "+"
+    | "-"
+    )
+    AddExp()
+  ]
+}
+
+void MulExp() :
+{}
+{
+  PowExp()
+  [
+    (
+      "*"
+    | "/"
+    | "\\"
+    | < MOD >
+    )
+    MulExp()
+  ]
+}
+
+void PowExp() :
+{}
+{
+  ItemExp() [ "^" PowExp() ]
+}
+
+void ItemExp() :
+{}
+{
+  Literal()
+| < IDENTIFIER >
+  [
+    (
+      "[" Exp() "]"
+    )+
+  | "(" Exp()
+    (
+      "," Exp()
+    )*
+    ")"
+  ]
+| "(" Exp()
+  (
+    "," Exp()
+  )*
+  ")"
+| "{" Exp() "}"
+| "[" Exp() "]"
+| < SUMMATION > ItemExp()
+| < PRODUCT > ItemExp()
+| < COUNT > ItemExp()
+| < MAX > ItemExp()
+| < MIN > ItemExp()
+}
+
+void Literal() :
+{}
+{
+  < INT_LITERAL >
+| < REAL_LITERAL >
+| < BOOL_LITERAL >
+| < CHAR_LITERAL >
+| < STRING_LITERAL >
+}

@@ -1,0 +1,9 @@
+#input
+	n of int in [1,100];
+#required
+	q of (int in [1,n])[1~n];
+	alldiff q;
+	alldiff [q[i] + i : forall i];
+	alldiff [q[i] - i : forall i];
+#output
+	q;

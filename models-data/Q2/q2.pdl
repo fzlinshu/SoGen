@@ -1,0 +1,9 @@
+#input
+	n of int in [1,10];
+#required
+	r of (int in [0,n^2])[1~n];
+	r[1] = 0;
+	r[i] < r[i + 1] : forall i;
+	alldiff [r[i] - r[j] : forall (i,j) (i < j)];
+#objective
+	minimize r[n];

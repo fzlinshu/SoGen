@@ -1,0 +1,29 @@
+#input
+	n of int in [1,10^5];
+	w1 of int in [0,10^5];
+	w2 of int in [0,10^5];
+	w3 of int in [0,10^5];
+	w4 of int in [0,10^5];
+	w5 of int in [0,10^5];
+	a1 of int in [0,100];
+	a2 of int in [0,100];
+	a3 of int in [0,100];
+	a4 of int in [0,100];
+	a5 of int in [0,100];
+	b1 of int in [0,100];
+	b2 of int in [0,100];
+	b3 of int in [0,100];
+	b4 of int in [0,100];
+	b5 of int in [0,100];
+	p of int in [1,100];
+	q of int in [1,100];
+#required
+	x of int in [0,n];
+	y of int in [0,n];
+	a1*x + b1*y <= w1;
+	a2*x + b2*y <= w2;
+	a3*x + b3*y <= w3;
+	a4*x + b4*y <= w4;
+	a5*x + b5*y <= w5;
+#objective
+	maximize p*x + q*y;

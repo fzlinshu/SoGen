@@ -1,0 +1,9 @@
+#input
+	n of int in [1,100];
+	c of (int in [-50,50])[1~n];
+	w of (int in [-50,50])[1~n];
+#required
+	s of (int in [1,n]){};
+	summation [c[i] : forall i (i in s)] > 0;
+#objective
+	maximize summation [w[i] : forall i (i in s)];

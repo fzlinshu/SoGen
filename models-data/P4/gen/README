@@ -1,0 +1,15 @@
+In the current state of implementation, the "main" procedure launchs a Boltzmann sampler 
+for "triply derivated" connected planar graphs, with three possible values of the parameter x.
+The three values correspond to an expected size of 1000, 10000, and 100000, respectively.
+
+To run the sampler, go to the directory BoltzmannPlanarGraphs/build/classes and type "java boltzmannplanargraphs.Main",
+then type the expected size you want (1000 or 10000 or 100000).
+The procedure returns a random connected planar graph. The basic informations (number of vertices/edges) are
+printed in the shell, whereas the whole graph is printed in the file "BoltzmannPlanarGraphs/ListEdges.txt":
+each line of the file corresponds to an edge of the graph. The graph can be drawn by loading "ListEdges.txt"
+in the free software "pigale" available at http://pigale.sourceforge.net
+
+The evaluation of the generating functions of planar graphs are done using Maple based on the
+exact expressions of Gimenez and Noy, see the file "Evaluation.mws".
+These values are needed to calculate the branching probabilities of the samplers, which are in the file 
+"BoltzmannPlanarGraphs/src/dataWithEvaluations/values_planar".

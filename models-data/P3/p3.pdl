@@ -1,0 +1,10 @@
+#input
+	v of int in [1,10^5];
+	n of int in [1,10^5];
+#required
+	l of int in [1,n];
+	w of int in [1,n];
+	h of int in [1,n];
+	l * w * h = v;
+#objective
+	minimize (l * w + w * h + h * l);

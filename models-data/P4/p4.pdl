@@ -1,0 +1,8 @@
+#input
+	n of int in [1,100];
+	g of (int in [0,1])[1~n][1~n];
+#required
+	c of (int in [1,4])[1~n];
+	(g[i][j] = 0 or c[i] != c[j]) : forall (i,j);
+#output
+	c;

@@ -1,0 +1,17 @@
+language ESSENCE' 1.0
+
+given n : int
+letting         QUEENS be domain int(0..n-1)
+find            queens : matrix indexed by [ QUEENS ] of QUEENS
+
+such that       allDiff(queens),	    
+
+                forAll i,j : QUEENS . 
+                   (i > j) ->
+                         (queens[i] - i != queens[j] - j),
+
+
+                forAll i,j : QUEENS . 
+                   (i > j) ->
+                       (queens[i] + i != queens[j] + j)
+             

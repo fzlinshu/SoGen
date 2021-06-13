@@ -1,0 +1,8 @@
+#input
+	n of int in [1,10^5];
+	a of (int in [1,10^5])[1~n];
+#required
+	c of int in [1,10^5];
+	a[i] mod c = 0 : forall i;
+#objective
+	maximize c;

@@ -1,0 +1,12 @@
+language ESSENCE' 1.0
+
+given n : int
+given c : int
+letting N be domain int(1..n)
+
+find g : matrix indexed by [N,N] of int(1..c)
+
+such that
+    forAll i,j,k,l : N.
+        ((i < j) /\ (k < l)) -> 
+            !(g[i,k]=g[i,l] /\ g[i,l]=g[j,l] /\ g[j,l]=g[j,k])

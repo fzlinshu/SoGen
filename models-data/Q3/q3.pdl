@@ -1,0 +1,8 @@
+#input
+	n of int in [1,10];
+	c of int in [1,10];
+#required
+	g of (int in [1,c])[1~n][1~n];
+	not (g[i][k] = g[i][l] and g[i][l] = g[j][l] and g[j][l] = g[j][k]) : forall (i,j,k,l) (i < j and k < l);
+#output
+	g;
